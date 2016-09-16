@@ -1,24 +1,12 @@
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import React from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  NavigatorIOS,
-  TouchableHighlight,
-  WebView,
-  ListView,
-} from 'react-native';
 
 import _ from 'lodash';
 
-import InfiniteScrollView from 'react-native-infinite-scroll-view';
+import InfiniteScrollView from './InfiniteScrollView';
 
-
-GetRepositoryIssuesQuery = gql`
+const GetRepositoryIssuesQuery = gql`
   query GetRepositoryIssues($states: [IssueState!], $name: String!, $login: String!, $before: String) {
     repositoryOwner(login: $login) {
       repository(name: $name) {
@@ -49,6 +37,7 @@ const withIssues = graphql(GetRepositoryIssuesQuery, {
     }
   }),
   props: ({ data }) => {
+    console.log('withIssues.props.data:', data);
     if (data.loading) {
       return { loading: true, fetchNextPage: () => {} };
     }
@@ -58,6 +47,8 @@ const withIssues = graphql(GetRepositoryIssuesQuery, {
     }
 
     const fetchNextPage = () => {
+      console.log('fetchNextPage:', data);
+      
       return data.fetchMore({
         variables: {
           before: _.first(data.repositoryOwner.repository.issues.edges).cursor,
@@ -80,6 +71,7 @@ const withIssues = graphql(GetRepositoryIssuesQuery, {
           }
         }
       })
+      
     }
 
     return {
@@ -97,15 +89,16 @@ const withIssues = graphql(GetRepositoryIssuesQuery, {
 class Repository extends React.Component{
   constructor(props) {
     super();
-
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    console.log('props:', props);
+    // const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     this.state = {
-      dataSource: ds.cloneWithRows(props.issues || []),
+      dataSource: props.issues || [],
     };
   }
 
   componentWillReceiveProps(newProps) {
+    console.log('newProps:', newProps);
     if (newProps.loading) { return; }
 
     this.setState({
@@ -115,7 +108,9 @@ class Repository extends React.Component{
 
   render() {
     const { issues, goToIssue, hasNextPage, fetchNextPage } = this.props;
-
+    console.log(this.state.dataSource);
+    return (<p>TODO : ListView</p>);
+    /*
     return (
       <View style={{flex: 1}}>
         <ListView
@@ -136,6 +131,7 @@ class Repository extends React.Component{
         />
       </View>
     );
+    */
   }
 }
 
@@ -143,7 +139,7 @@ const IssuesWithData = withIssues(Repository);
 
 export default IssuesWithData;
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
   },
@@ -157,4 +153,4 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
-});
+};

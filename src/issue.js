@@ -2,21 +2,9 @@ import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import React from 'react';
 
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  NavigatorIOS,
-  TouchableHighlight,
-  WebView,
-  ListView,
-} from 'react-native';
-
 import _ from 'lodash';
 
-import InfiniteScrollView from 'react-native-infinite-scroll-view';
+import InfiniteScrolldiv from './InfiniteScrollView';
 
 const IssueCommentsQuery = gql`
   query GetRepositoryIssues($id: ID!, $after: String) {
@@ -90,7 +78,7 @@ class Issue extends React.Component {
   constructor(props) {
     super();
 
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    const ds = new div.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     this.state = {
       dataSource: ds.cloneWithRows(props.comments || []),
@@ -109,34 +97,34 @@ class Issue extends React.Component {
     const { comments, hasNextPage, loading, fetchNextPage } = this.props;
 
     return (
-      <View style={{flex: 1}}>
-        <ListView
-          renderScrollComponent={props => <InfiniteScrollView {...props} />}
+      <div style={{flex: 1}}>
+        <div
+          renderScrollComponent={props => <InfiniteScrolldiv {...props} />}
           dataSource={this.state.dataSource}
           renderRow={(comment) => {
             return (
-              <View key={comment.id}>
-                <Text style={styles.commentAuthor}>
+              <div key={comment.id}>
+                <p style={styles.commentAuthor}>
                   {comment.author.login}
-                </Text>
-                <Text style={styles.commentBody}>
+                </p>
+                <p style={styles.commentBody}>
                   {comment.body}
-                </Text>
-              </View>
+                </p>
+              </div>
             )
           }}
           onLoadMoreAsync={fetchNextPage}
           canLoadMore={hasNextPage}
           enableEmptySections={true}
         />
-      </View>
+      </div>
     );
   }
 }
 
 export default withIssueComments(Issue);
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
   },
@@ -150,4 +138,4 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingBottom: 30,
   }
-});
+};

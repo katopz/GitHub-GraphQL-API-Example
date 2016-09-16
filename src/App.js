@@ -1,13 +1,4 @@
 import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  NavigatorIOS,
-  TouchableHighlight,
-} from 'react-native';
 
 import _ from 'lodash';
 
@@ -42,7 +33,7 @@ const client = new ApolloClient({
   networkInterface,
 });
 
-class IssueReader extends Component {
+export default class App extends Component {
   constructor() {
     super();
     this.state = { login: false };
@@ -79,20 +70,17 @@ class IssueReader extends Component {
     };
   }
   render() {
+    const info = this.routeForRepository('apollostack', 'apollo-client');
+    console.log(JSON.stringify(info));
     return this.state.login ? (
       <ApolloProvider client={client}>
-        <NavigatorIOS
-          ref="nav"
-          style={styles.container}
-          initialRoute={this.routeForRepository('apollostack', 'apollo-client')}
-          tintColor="#008888"
-        />
+        <Repository {...info} />
       </ApolloProvider>
-    ) : <Text>Logging in</Text>;
+    ) : <p>Logging in...</p>;
   }
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
   },
@@ -106,6 +94,4 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
-});
-
-AppRegistry.registerComponent('IssueReader', () => IssueReader);
+};

@@ -1,4 +1,4 @@
-const React = require('react-native');
+import React from 'react';
 const base64 = require('base-64');
 
 const {
@@ -35,6 +35,7 @@ export function login(name, pwd) {
       const body = response._bodyInit;
       return response.json().then((json) => {
         if (isValid) {
+          console.log(json.token);
           return json.token;
         } else {
           throw new Error(json.message);
