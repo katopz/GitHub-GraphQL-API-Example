@@ -4,8 +4,6 @@ import React from 'react';
 
 import _ from 'lodash';
 
-import InfiniteScrollView from './InfiniteScrollView';
-
 const GetRepositoryIssuesQuery = gql`
   query GetRepositoryIssues($states: [IssueState!], $name: String!, $login: String!, $before: String) {
     repositoryOwner(login: $login) {
@@ -28,18 +26,24 @@ const GetRepositoryIssuesQuery = gql`
 `;
 
 const withIssues = graphql(GetRepositoryIssuesQuery, {
-  options: ({ login, name }) => ({
-    variables: {
-      states: ['OPEN'],
-      login,
-      name,
-      before: null,
+  options: ({ login, name }) => {
+    // login, name didn't pass through, don't know why ;\
+    console.log('arguments:', arguments);
+    console.log('login:', login);
+    console.log('name:', name);
+    return {
+      variables: {
+        states: ['OPEN'],
+        login: 'apollostack',
+        name: 'apollo-client',
+        before: null,
+      }
     }
-  }),
+  },
   props: ({ data }) => {
     console.log('withIssues.props.data:', data);
     if (data.loading) {
-      return { loading: true, fetchNextPage: () => {} };
+      return { loading: true, fetchNextPage: () => { } };
     }
 
     if (data.error) {
@@ -48,7 +52,7 @@ const withIssues = graphql(GetRepositoryIssuesQuery, {
 
     const fetchNextPage = () => {
       console.log('fetchNextPage:', data);
-      
+
       return data.fetchMore({
         variables: {
           before: _.first(data.repositoryOwner.repository.issues.edges).cursor,
@@ -71,7 +75,7 @@ const withIssues = graphql(GetRepositoryIssuesQuery, {
           }
         }
       })
-      
+
     }
 
     return {
@@ -86,7 +90,7 @@ const withIssues = graphql(GetRepositoryIssuesQuery, {
   },
 });
 
-class Repository extends React.Component{
+class Repository extends React.Component {
   constructor(props) {
     super();
     console.log('props:', props);
@@ -102,14 +106,18 @@ class Repository extends React.Component{
     if (newProps.loading) { return; }
 
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(newProps.issues)
+      login: 'apollostack',
+      dataSource: newProps.issues.concat()//this.state.dataSource.cloneWithRows(newProps.issues)
     })
   }
 
   render() {
     const { issues, goToIssue, hasNextPage, fetchNextPage } = this.props;
-    console.log(this.state.dataSource);
-    return (<p>TODO : ListView</p>);
+    if (this.state.dataSource.length <= 0) return (<p>hmm?</p>);
+    let i = 0;
+    return (<div>{
+      this.state.dataSource.map((item) => (<li key={i++}>{item.title}</li>))
+    }</div>)
     /*
     return (
       <View style={{flex: 1}}>
@@ -138,19 +146,3 @@ class Repository extends React.Component{
 const IssuesWithData = withIssues(Repository);
 
 export default IssuesWithData;
-
-const styles = {
-  container: {
-    flex: 1,
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-};

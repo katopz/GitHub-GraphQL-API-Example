@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 
-import _ from 'lodash';
-
-import { graphql, ApolloProvider } from 'react-apollo';
+import { ApolloProvider } from 'react-apollo';
 import {login} from './githubLogin';
 
 import ApolloClient, { createNetworkInterface } from 'apollo-client';
-import gql from 'graphql-tag';
 
 import Repository from './repository';
 import Issue from './issue';
@@ -70,28 +67,12 @@ export default class App extends Component {
     };
   }
   render() {
-    const info = this.routeForRepository('apollostack', 'apollo-client');
-    console.log(JSON.stringify(info));
+    const _routeForRepository = this.routeForRepository('apollostack', 'apollo-client');
+    console.log('_routeForRepository:', _routeForRepository);
     return this.state.login ? (
       <ApolloProvider client={client}>
-        <Repository {...info} />
+        <Repository {..._routeForRepository} />
       </ApolloProvider>
     ) : <p>Logging in...</p>;
   }
 }
-
-const styles = {
-  container: {
-    flex: 1,
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-};

@@ -4,7 +4,21 @@ import React from 'react';
 
 import _ from 'lodash';
 
-import InfiniteScrolldiv from './InfiniteScrollView';
+const styles = {
+  container: {
+    flex: 1,
+  },
+  commentAuthor: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    padding: 10,
+  },
+  commentBody: {
+    fontSize: 18,
+    padding: 10,
+    paddingBottom: 30,
+  }
+};
 
 const IssueCommentsQuery = gql`
   query GetRepositoryIssues($id: ID!, $after: String) {
@@ -78,10 +92,10 @@ class Issue extends React.Component {
   constructor(props) {
     super();
 
-    const ds = new div.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    // const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     this.state = {
-      dataSource: ds.cloneWithRows(props.comments || []),
+      dataSource: props.issues || [],
     };
   }
 
@@ -96,7 +110,8 @@ class Issue extends React.Component {
   render() {
     const { comments, hasNextPage, loading, fetchNextPage } = this.props;
 
-    return (
+    return (<p>TODO : InfiniteScrolldiv</p>);
+      /*
       <div style={{flex: 1}}>
         <div
           renderScrollComponent={props => <InfiniteScrolldiv {...props} />}
@@ -119,23 +134,8 @@ class Issue extends React.Component {
         />
       </div>
     );
+    */
   }
 }
 
 export default withIssueComments(Issue);
-
-const styles = {
-  container: {
-    flex: 1,
-  },
-  commentAuthor: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    padding: 10,
-  },
-  commentBody: {
-    fontSize: 18,
-    padding: 10,
-    paddingBottom: 30,
-  }
-};

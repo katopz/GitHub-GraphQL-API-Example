@@ -1,10 +1,6 @@
 import React from 'react';
 const base64 = require('base-64');
 
-const {
-  AsyncStorage,
-} = React;
-
 const config = {
   GITHUB_CLIENT_ID: 'e0b1671ff764de482212',
   GITHUB_CLIENT_SECRET: '8f77dcfd6a807cff38ac558400c859f240806071',
@@ -19,7 +15,7 @@ export function login(name, pwd) {
   return fetch(AUTH_URL_PATH, {
     method: 'POST',
     headers: {
-      'Authorization' : 'Basic ' + encoded,
+      'Authorization': 'Basic ' + encoded,
       'User-Agent': 'GitHub Issue Browser',
       'Content-Type': 'application/json; charset=utf-8'
     },
@@ -32,7 +28,6 @@ export function login(name, pwd) {
   })
     .then((response) => {
       const isValid = response.status < 400;
-      const body = response._bodyInit;
       return response.json().then((json) => {
         if (isValid) {
           console.log(json.token);
@@ -49,6 +44,7 @@ export function tokenHeader() {
     'User-Agent': config.userAgent,
     'Accept': 'application/vnd.github.v3+json'
   }
+  // This won't work sry.
   if (this.isLogined()) {
     tHeader.Authorization = 'token ' + GLOBAL_USER.tokenInfo.token;
   }
